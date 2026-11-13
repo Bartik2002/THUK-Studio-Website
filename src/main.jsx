@@ -1,0 +1,88 @@
+import React, { useEffect, useRef, useState } from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Link, NavLink, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion, useInView } from 'framer-motion'
+import { ArrowDownRight, ArrowUpRight, ArrowLeft, Menu, X, Plus, Check, Moon, Sun } from 'lucide-react'
+import './styles.css'
+import thukLogo from './assets/thukstudio-logo-horizontal.png'
+
+const services = [
+  ['01', 'BRAND STRATEGY', 'Brand positioning, architecture, communication strategy and identity direction.'],
+  ['02', 'MARKET INTELLIGENCE', 'Research, consumer insight, competitor analysis and opportunity mapping.'],
+  ['03', 'PERFORMANCE MARKETING', 'Campaign strategy, creative testing, targeting and integrated execution.'],
+  ['04', 'CREATIVE & DESIGN', 'Visual identity, art direction, digital campaigns and brand communication.'],
+  ['05', 'E-LEARNING', 'Learning strategy, educational content and digital learning experiences.'],
+  ['06', 'DIGITAL EXPERIENCES', 'Interactive storytelling and memorable digital brand touchpoints.'],
+]
+
+const projects = [
+  { slug: 'the-new-ordinary', name: 'THE NEW\nORDINARY', type: 'BRAND IDENTITY', year: '2025', color: 'coral', caption: 'Making space for small daily rituals.' },
+  { slug: 'unfold', name: 'UNFOLD', type: 'DIGITAL EXPERIENCE', year: '2025', color: 'lime', caption: 'A living home for creative possibility.' },
+  { slug: 'terra', name: 'TERRA / 01', type: 'CREATIVE DIRECTION', year: '2024', color: 'blue', caption: 'A new point of view for considered movement.' },
+  { slug: 'notion', name: 'NOTION', type: 'CAMPAIGN SYSTEM', year: '2024', color: 'sand', caption: 'An idea that travels at the speed of conversation.' },
+]
+
+const insights = [
+  ['01.11.25', 'Brand is a behaviour, not a badge.', 'Perspective'],
+  ['18.09.25', 'Why familiarity is the new premium.', 'Strategy'],
+  ['04.07.25', 'Designing for the second look.', 'Creative'],
+]
+
+function Reveal({ children, className = '', delay = 0 }) {
+  const ref = useRef(null); const inView = useInView(ref, { once: true, margin: '-70px' })
+  return <motion.div ref={ref} className={className} initial={{ y: 40, opacity: 0 }} animate={inView ? { y: 0, opacity: 1 } : {}} transition={{ duration: .75, delay, ease: [0.22, 1, .36, 1] }}>{children}</motion.div>
+}
+
+function ScrollTop() { const { pathname } = useLocation(); useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }) }, [pathname]); return null }
+
+function BrandLogo() { return <span className="brand-logo"><span className="logo-crop"><img src={thukLogo} alt="THUK Studio"/></span></span> }
+
+function Navbar({ theme, toggleTheme }) {
+ const [open, setOpen] = useState(false); const location = useLocation(); useEffect(() => setOpen(false), [location.pathname]);
+ const items = [['/', 'HOME'], ['/about', 'ABOUT'], ['/services', 'SERVICES'], ['/work', 'WORK'], ['/insights', 'INSIGHTS']]
+ return <>
+  <header className="nav"><Link to="/" className="logo" aria-label="THUK Studio home"><BrandLogo/></Link><nav>{items.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</nav><button className="theme-toggle" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme}>{theme === 'dark' ? <Sun size={14}/> : <Moon size={14}/>}<span>{theme === 'dark' ? 'LIGHT' : 'DARK'}</span></button><Link className="talk-link" to="/contact">LET’S TALK <ArrowUpRight size={15}/></Link><button className="menu-btn" aria-label="Open menu" onClick={() => setOpen(!open)}>{open ? <X/> : <Menu/>}</button></header>
+  <AnimatePresence>{open && <motion.aside className="mobile-menu" initial={{ clipPath: 'circle(0% at 92% 6%)' }} animate={{ clipPath: 'circle(150% at 92% 6%)' }} exit={{ clipPath: 'circle(0% at 92% 6%)' }} transition={{ duration: .55, ease: [0.77,0,.18,1] }}><div className="mobile-menu-top"><span>MENU / 01</span><button aria-label="Close menu" onClick={() => setOpen(false)}><X/></button></div>{[...items, ['/contact', 'CONTACT']].map(([to,label], i) => <Link onClick={() => setOpen(false)} key={to} to={to}><i>0{i + 1}</i>{label}<ArrowUpRight/></Link>)}<p>STRATEGY, CREATIVITY &amp;<br/>INTELLIGENCE FOR WHAT’S NEXT.</p></motion.aside>}</AnimatePresence>
+ </>
+}
+
+function Footer() { return <footer><div className="footer-top"><span className="eyebrow">MAKE YOUR MOVE</span><h2>LET’S BUILD<br/><em>WHAT’S NEXT.</em></h2><Link to="/contact" className="circle-link">START A<br/>CONVERSATION <ArrowUpRight/></Link></div><div className="footer-bottom"><div><Link to="/" className="logo" aria-label="THUK Studio home"><BrandLogo/></Link><p>BUILDING NEXT-GEN BRANDS.<br/>© 2026 THUK STUDIO.</p></div><div className="footer-nav"><Link to="/about">ABOUT</Link><Link to="/services">SERVICES</Link><Link to="/work">WORK</Link><Link to="/insights">INSIGHTS</Link></div><div className="footer-nav"><a href="mailto:hello@thuk.studio">HELLO@THUK.STUDIO</a><a href="https://instagram.com" target="_blank">INSTAGRAM</a><a href="https://linkedin.com" target="_blank">LINKEDIN</a><button onClick={() => window.scrollTo({top:0,behavior:'smooth'})}>BACK TO TOP ↑</button></div></div></footer> }
+
+function HeroGraphic() { return <div className="hero-art" aria-hidden="true"><div className="orbit orbit-a"/><div className="orbit orbit-b"/><div className="orange-sphere"/><div className="art-label label-a">THUK /<br/>THOUGHT UNIT<br/>FOR KINETIC<br/>CULTURE</div><div className="art-label label-b">EST. 2023<br/>KOLKATA / IN</div><div className="cross">+</div></div> }
+
+function Home() { return <main>
+ <section className="hero section-dark"><div className="hero-meta"><span>INDEPENDENT STUDIO<br/>KOLKATA, INDIA</span><span>SCROLL TO EXPLORE <ArrowDownRight size={14}/></span></div><motion.h1 initial={{opacity:0, y:70}} animate={{opacity:1,y:0}} transition={{duration:1, ease:[.22,1,.36,1]}}>BUILDING<br/><em>NEXT-GEN</em><br/>BRANDS<span className="orange-dot">.</span></motion.h1><HeroGraphic/><div className="hero-bottom"><p>We bring strategy, creativity and intelligence together to build brands ready for what’s next.</p><Link to="/work" className="text-link">EXPLORE OUR THINKING <ArrowDownRight/></Link></div></section>
+ <section className="intro section-light"><Reveal><span className="eyebrow">[ THE THUK WAY ]</span><h2>NOT JUST<br/>ANOTHER <em>CREATIVE</em><br/>STUDIO.</h2></Reveal><Reveal className="intro-copy" delay={.15}><p>Markets shift. Audiences evolve. Ideas move faster than ever. Building a brand today takes more than visibility.</p><p>It takes understanding, direction and the guts to make something that matters.</p><Link to="/about" className="arrow-button">MORE ABOUT US <ArrowUpRight/></Link></Reveal></section>
+ <section className="manifesto section-dark"><Reveal><p className="eyebrow">[ 001 / OUR POINT OF VIEW ]</p><h2>GOOD <em>THINKING</em><br/>MAKES GREAT<br/>THINGS <span>HAPPEN.</span></h2></Reveal><div className="manifesto-list">{['Strategy before execution.','Research before assumptions.','Creativity with purpose.','Communication that connects.','Design that makes a difference.','Performance with creative intelligence.'].map((x,i)=><Reveal key={x} delay={i*.06}><div><i>0{i+1}</i>{x}<Plus/></div></Reveal>)}</div></section>
+ <WorkBuffer />
+ <ServicesPreview />
+ <Approach />
+ </main> }
+
+function WorkTile({ project, large = false }) { return <Link to={`/work/${project.slug}`} className={`work-tile ${project.color} ${large ? 'large' : ''}`}><div className="tile-index">{project.year}<span>{project.type}</span></div><div className="tile-art"><div className="shape"/><strong>{project.name.split('\n').map((s,i)=><React.Fragment key={i}>{s}{i === 0 && <br/>}</React.Fragment>)}</strong></div><div className="tile-bottom"><span>{project.caption}</span><ArrowUpRight/></div></Link> }
+
+function WorkBuffer() { return <section className="works-loading section-light"><div className="loading-copy"><span className="eyebrow">[ WORK IN PROGRESS / 99% GOOD ENERGY ]</span><h2>CRAAA<span>AZY</span><br/><em>WORKS</em> ARE<br/>LOADING.</h2><p>Craaaazy works are getting installed, check later!!</p><Link to="/contact" className="arrow-button">START SOMETHING WITH US <ArrowUpRight/></Link></div><div className="loader-stage" aria-label="Projects are loading"><div className="loader-ring ring-one"/><div className="loader-ring ring-two"/><div className="loader-ring ring-three"/><div className="loader-core"><span>THUK</span><i>99%</i></div><div className="loader-tag tag-one">BRAND<br/>ENERGY</div><div className="loader-tag tag-two">MADE FOR<br/>WHAT’S NEXT</div></div><div className="loading-track"><span/><i>INSTALLING GOOD STUFF</i><b>99%</b></div></section> }
+
+function ServicesPreview() { const [active,setActive] = useState(0); return <section className="services-preview section-dark"><div className="services-title"><span className="eyebrow">[ EXPERTISE / 06 ]</span><h2>WHAT WE<br/>BRING TO<br/><em>THE TABLE.</em></h2><div className="service-globe"><div/><span>{services[active][0]}</span></div></div><div className="service-list">{services.map((s,i)=><button key={s[0]} className={active===i?'active':''} onMouseEnter={()=>setActive(i)} onFocus={()=>setActive(i)} onClick={()=>setActive(i)}><i>{s[0]}</i><strong>{s[1]}</strong><span>{active===i && s[2]}</span><ArrowUpRight/></button>)}</div><Link className="outline-link" to="/services">EXPLORE OUR CAPABILITIES <ArrowUpRight/></Link></section> }
+
+function Approach() { return <section className="approach orange-section"><span className="eyebrow">[ OUR APPROACH ]</span><Reveal><h2>FROM THINKING<br/>TO <em>MAKING</em> THINGS<br/>HAPPEN.</h2></Reveal><div className="steps">{[['01','DISCOVER','Understand the business, market and audience.'],['02','STRATEGISE','Identify the right direction and opportunity.'],['03','CREATE','Develop ideas, communication and experiences.'],['04','EXECUTE','Bring the strategy to life.']].map((s,i)=><Reveal key={s[0]} delay={i*.08}><article><i>{s[0]}</i><h3>{s[1]}</h3><p>{s[2]}</p><div className="step-line"/></article></Reveal>)}</div></section> }
+
+function PageHero({ kicker, title, intro }) { return <section className="page-hero section-dark"><span className="eyebrow">{kicker}</span><motion.h1 initial={{opacity:0,y:35}} animate={{opacity:1,y:0}} transition={{duration:.7}}>{title}</motion.h1>{intro && <p>{intro}</p>}<div className="page-star">✦</div></section> }
+
+function About() { return <main><PageHero kicker="[ ABOUT THUK ]" title={<>GOOD IDEAS NEED<br/>MORE THAN <em>GOOD</em><br/>EXECUTION.</>} intro="We pair sharp thinking with the energy to make things real."/><section className="about-lead section-light"><Reveal><p className="lead">THUK is a multidisciplinary studio for the brands, people and ideas that want to move culture forward.</p></Reveal><div className="about-grid"><p>We believe the strongest work begins well before the first visual. It begins with a clear question, a useful insight and a genuine reason to exist.</p><p>From positioning to performance, we bring specialist minds together around the one thing that matters: creating change that lasts.</p></div></section><section className="team-strip"><div>BRAND<br/>STRATEGISTS</div><div>MARKET<br/>RESEARCHERS</div><div>CREATIVE<br/>DESIGNERS</div><div>GROWTH<br/>THINKERS</div></section><Approach/></main> }
+
+function ServicesPage() { return <main><PageHero kicker="[ CAPABILITIES / 06 ]" title={<>WE MAKE<br/>THE COMPLEX <em>FEEL</em><br/>INEVITABLE.</>} intro="A tailored mix of strategy, intelligence, design and momentum."/><section className="all-services section-light">{services.map((s,i)=><Reveal key={s[0]}><article><span>{s[0]}</span><h2>{s[1]}</h2><p>{s[2]}</p><ul><li>Clear direction</li><li>One integrated team</li><li>Made to move</li></ul><Link to="/contact"><ArrowUpRight/></Link></article></Reveal>)}</section></main> }
+
+function Work() { return <main><PageHero kicker="[ WORK / UNDER CONSTRUCTION ]" title={<>BIG THINGS<br/>TAKE A <em>MINUTE.</em></>} intro="We’re putting the finishing energy into our case studies."/><WorkBuffer/></main> }
+
+function ProjectDetail() { const slug=useLocation().pathname.split('/').pop(); const project=projects.find(p=>p.slug===slug)||projects[0]; return <main><section className="project-detail section-dark"><Link to="/work" className="back-link"><ArrowLeft/> BACK TO WORK</Link><div className="project-heading"><span>{project.year} / {project.type}</span><h1>{project.name.replace('\n',' ')}</h1><p>{project.caption}</p></div><div className={`detail-visual ${project.color}`}><div className="shape"/><strong>{project.name}</strong></div></section><section className="project-copy section-light"><div><span className="eyebrow">THE BRIEF</span><h2>FIND THE<br/><em>UNEXPECTED.</em></h2></div><p>We created a distinct world from the ground up, turning a useful thought into an identity with its own energy, voice and visual language.</p></section><section className="project-notes orange-section"><span>THUK.STUDIO / CASE STUDY</span><h2>Ideas that<br/>keep <em>moving.</em></h2></section></main> }
+
+function Insights() { return <main><PageHero kicker="[ NOTES FROM THE STUDIO ]" title={<>THINGS WE’RE<br/><em>THINKING</em> ABOUT.</>} intro="Observations on culture, creativity and what makes brands matter."/><section className="insight-list section-light">{insights.map((x,i)=><Reveal key={x[1]}><Link to={`/insights/${i+1}`}><span>{x[0]}</span><h2>{x[1]}</h2><i>{x[2]}</i><ArrowUpRight/></Link></Reveal>)}</section></main> }
+
+function Article() { const id=useLocation().pathname.split('/').pop(); const article=insights[Number(id)-1]||insights[0]; return <main><article className="article section-light"><Link to="/insights" className="back-link dark"><ArrowLeft/> ALL INSIGHTS</Link><span className="eyebrow">{article[2]} / {article[0]}</span><h1>{article[1]}</h1><p className="article-intro">The brands that leave a mark aren’t merely noticed. They’re felt — in a choice, a habit, a feeling that stays a little longer.</p><div className="article-copy"><p>The familiar can be a powerful thing. Not because it is safe, but because it gives people a place to begin. A considered identity makes the way in feel easy, then gives people something worth discovering.</p><p>For us, the work is always about that second look: the detail that rewards curiosity and makes an idea feel bigger than its surface.</p></div></article></main> }
+
+function Contact() { const [sent,setSent]=useState(false); const [error,setError]=useState(''); function submit(e){e.preventDefault(); const form=new FormData(e.currentTarget); if(!form.get('name')||!form.get('email')||!form.get('details'))return setError('Please complete your name, email and project details.'); setError('');setSent(true);e.currentTarget.reset()} return <main><section className="contact section-dark"><span className="eyebrow">[ NEW BUSINESS / HELLO@THUK.STUDIO ]</span><h1>LET’S MAKE<br/>SOMETHING <em>MATTER.</em></h1><div className="contact-layout"><div><p>Tell us what you’re thinking. We’ll bring the questions, the ideas and a very good cup of coffee.</p><a className="outline-link" target="_blank" href="https://calendly.com/hello-thuk/30min">BOOK A 30 MINUTE CHAT <ArrowUpRight/></a></div><form onSubmit={submit} noValidate><label>YOUR NAME<input name="name" placeholder="How should we call you?"/></label><label>EMAIL ADDRESS<input name="email" type="email" placeholder="name@company.com"/></label><label>COMPANY<input name="company" placeholder="Where are you from?"/></label><label>PROJECT DETAILS<textarea name="details" placeholder="What are you looking to build?"/></label>{error&&<p className="form-error">{error}</p>}{sent&&<p className="form-success"><Check/> Message received. We’ll be in touch shortly.</p>}<button type="submit" className="submit-btn">SEND ENQUIRY <ArrowUpRight/></button></form></div></section></main> }
+
+function App(){ const [theme,setTheme]=useState(() => localStorage.getItem('thuk-theme') || 'dark'); useEffect(()=>{document.documentElement.dataset.theme=theme;localStorage.setItem('thuk-theme',theme)},[theme]); return <BrowserRouter><ScrollTop/><Navbar theme={theme} toggleTheme={()=>setTheme(theme === 'dark' ? 'light' : 'dark')}/><AnimatePresence mode="wait"><RoutesContent/></AnimatePresence><Footer/></BrowserRouter> }
+function RoutesContent(){ const path=useLocation().pathname; let C=Home; if(path==='/about')C=About; else if(path==='/services')C=ServicesPage; else if(path==='/work')C=Work; else if(path.startsWith('/work/'))C=ProjectDetail; else if(path==='/insights')C=Insights; else if(path.startsWith('/insights/'))C=Article; else if(path==='/contact')C=Contact; return <motion.div key={path} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:.3}}><C/></motion.div> }
+createRoot(document.getElementById('root')).render(<App />)
